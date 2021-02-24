@@ -7,6 +7,7 @@ import org.example.crm.utils.SqlSessionUtil;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,13 +16,19 @@ import java.util.Map;
  */
 public class UserDaoTest {
 
+    private UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
     @Test
     public void testSelectByNameAndPwd() {
-        UserDao userDao = SqlSessionUtil.getSqlSession().getMapper(UserDao.class);
         Map<String, String> map = new HashMap<>();
         map.put("loginAct", "ls");
         map.put("loginPwd", MD5Util.getMD5("123"));
         User user = userDao.selectByNameAndPwd(map);
         System.out.println(user);
+    }
+
+    @Test
+    public void testSelectUserList() {
+        List<User> userList = userDao.selectUserList();
+        System.out.println(userList);
     }
 }

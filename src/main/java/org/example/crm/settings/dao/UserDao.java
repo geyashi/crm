@@ -2,6 +2,7 @@ package org.example.crm.settings.dao;
 
 import org.example.crm.settings.domain.User;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,4 +12,6 @@ import java.util.Map;
 public interface UserDao {
 
     User selectByNameAndPwd(Map<String, String> map);
+
+    List<User> selectUserList();
 }

@@ -10,7 +10,6 @@
   
   	<package name="org.example.crm.settings.domain"/>
   	<package name="org.example.crm.workbench.domain"/>
-
   
   </typeAliases>
   

@@ -18,10 +18,66 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 <script type="text/javascript">
 
+	function getUserList() {
+		$.ajax({
+			url: "workbench/activity/getUserList.do",
+			type: "GET",
+			dataType: "json",
+			success: function (data) {
+			// [{user1}, {user2}, ...]
+				console.log(data);
+				var html = "";
+				$.each(data, function (i, n) {
+					html += "<option value=" + n.id + ">" + n.name + "</option>";
+				});
+				$("#create-owner").html(html);
+				$("#create-owner").val("${user.id}");
+			}
+		})
+	}
+
 	$(function(){
+
+		$("#addBtn").click(function () {
+			getUserList();
+
+			$(".time").datetimepicker({
+				minView: "month",
+				language: "zh-CN",
+				format: "yyyy-mm-dd",
+				autoclose: true,
+				todayBtn: true,
+				pickerPosition: "bottom-left"
+			});
+
+			$("#createActivityModal").modal("show");
+		});
 		
-		
-		
+		$("#saveBtn").click(function () {
+			$.ajax({
+				url: "workbench/activity/save.do",
+				type: "POST",
+				dataType: "json",
+				data: {
+					owner: $.trim($("#create-owner").val()),
+					name: $.trim($("#create-name").val()),
+					startDate: $.trim($("#create-startDate").val()),
+					endDate: $.trim($("#create-endDate").val()),
+					cost: $.trim($("#create-cost").val()),
+					description: $.trim($("#create-description").val())
+				},
+				success: function (data) {
+					// {"success":true}
+					if (data.success) {
+						$("#createActivityModal").modal("hidden");
+					}else {
+						alert("save fail");
+					}
+				}
+			})
+		});
+
+
 	});
 	
 </script>
@@ -45,26 +101,23 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						<div class="form-group">
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
-								<select class="form-control" id="create-marketActivityOwner">
-								  <option>zhangsan</option>
-								  <option>lisi</option>
-								  <option>wangwu</option>
+								<select class="form-control" id="create-owner">
 								</select>
 							</div>
                             <label for="create-marketActivityName" class="col-sm-2 control-label">名称<span style="font-size: 15px; color: red;">*</span></label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="create-marketActivityName">
+                                <input type="text" class="form-control" id="create-name">
                             </div>
 						</div>
 						
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-startTime">
+								<input type="text" class="form-control time" id="create-startTime">
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="create-endTime">
+								<input type="text" class="form-control time" id="create-endTime">
 							</div>
 						</div>
                         <div class="form-group">
@@ -86,7 +139,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">保存</button>
+					<button type="button" class="btn btn-primary" id="saveBtn">保存</button>
 				</div>
 			</div>
 		</div>
@@ -207,9 +260,9 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createActivityModal"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-primary" id="addBtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-default" id="updateBtn"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="deleteBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 			</div>
